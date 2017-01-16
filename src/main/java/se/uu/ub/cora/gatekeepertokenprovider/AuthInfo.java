@@ -19,7 +19,7 @@
 
 package se.uu.ub.cora.gatekeepertokenprovider;
 
-public class AuthInfo {
+public final class AuthInfo {
 	public final String authToken;
 	public final int timeToLiveInMilliseconds;
 

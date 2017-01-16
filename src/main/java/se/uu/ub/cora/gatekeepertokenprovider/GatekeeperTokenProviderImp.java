@@ -22,7 +22,7 @@ package se.uu.ub.cora.gatekeepertokenprovider;
 import se.uu.ub.cora.httphandler.HttpHandler;
 import se.uu.ub.cora.httphandler.HttpHandlerFactory;
 
-public class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
+public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
 
 	private String baseUrl;
 	private HttpHandlerFactory httpHandlerFactory;
