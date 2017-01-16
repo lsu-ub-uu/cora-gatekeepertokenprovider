@@ -37,7 +37,6 @@ public class GatekeeperTokenProviderTest {
 		String baseUrl = "http://localhost:8080/gatekeeper/";
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);
-
 	}
 
 	@Test
