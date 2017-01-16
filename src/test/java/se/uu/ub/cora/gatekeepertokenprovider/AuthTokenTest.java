@@ -19,18 +19,19 @@
 
 package se.uu.ub.cora.gatekeepertokenprovider;
 
-public final class AuthInfo {
-	public final String authToken;
-	public final int timeToLiveInMilliseconds;
+import static org.testng.Assert.assertEquals;
 
-	private AuthInfo(String authToken, int timeToLiveInMilliseconds) {
-		this.authToken = authToken;
-		this.timeToLiveInMilliseconds = timeToLiveInMilliseconds;
+import org.testng.annotations.Test;
+
+public class AuthTokenTest {
+	@Test
+	public void test() {
+		String authToken = "someAuthToken";
+		int timeToLiveInMilliseconds = 300;
+
+		AuthToken authInfo = AuthToken.withIdAndValidForNoSeconds(authToken,
+				timeToLiveInMilliseconds);
+		assertEquals(authInfo.id, "someAuthToken");
+		assertEquals(authInfo.validForNoSeconds, 300);
 	}
-
-	public static AuthInfo withAuthTokenAndTimeToLiveInMilliseconds(String authToken,
-			int timeToLiveInMilliseconds) {
-		return new AuthInfo(authToken, timeToLiveInMilliseconds);
-	}
-
 }

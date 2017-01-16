@@ -19,11 +19,16 @@
 
 package se.uu.ub.cora.gatekeepertokenprovider;
 
+import se.uu.ub.cora.gatekeepertokenprovider.json.JsonToAuthTokenConverter;
+import se.uu.ub.cora.gatekeepertokenprovider.json.UserInfoToJsonConverter;
 import se.uu.ub.cora.httphandler.HttpHandler;
 import se.uu.ub.cora.httphandler.HttpHandlerFactory;
+import se.uu.ub.cora.spider.authentication.AuthenticationException;
 
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
-
+	private static final int STATUS_OK = 200;
+	private static final String APPLICATION_UUB_RECORD_JSON = "application/uub+record+json";
+	private static final String ACCEPT = "Accept";
 	private String baseUrl;
 	private HttpHandlerFactory httpHandlerFactory;
 
@@ -38,11 +43,24 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	}
 
 	@Override
-	public AuthInfo getAuthTokenForUserInfo(UserInfo userInfo) {
+	public AuthToken getAuthTokenForUserInfo(UserInfo userInfo) {
 		String url = baseUrl + "rest/authToken";
+
+		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
+		String json = userInfoToJsonConverter.convertUserInfoToJson();
+
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
-		return AuthInfo.withAuthTokenAndTimeToLiveInMilliseconds("", 0);
+		httpHandler.setRequestProperty(ACCEPT, APPLICATION_UUB_RECORD_JSON);
+		httpHandler.setRequestProperty("Content-Type", APPLICATION_UUB_RECORD_JSON);
+		httpHandler.setOutput(json);
+
+		if (httpHandler.getResponseCode() != STATUS_OK) {
+			throw new AuthenticationException("authToken gives no authorization");
+		}
+		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
+				.forJson(httpHandler.getResponseText());
+		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
 	}
 
 }

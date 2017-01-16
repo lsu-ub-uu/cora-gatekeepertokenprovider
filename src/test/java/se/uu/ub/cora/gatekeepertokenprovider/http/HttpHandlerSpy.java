@@ -20,6 +20,8 @@
 package se.uu.ub.cora.gatekeepertokenprovider.http;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import se.uu.ub.cora.httphandler.HttpHandler;
 
@@ -29,6 +31,8 @@ public class HttpHandlerSpy implements HttpHandler {
 	public String url;
 	private String jsonAnswer;
 	private int responseCode = 200;
+	public String outputString;
+	public Map<String, String> requestProperties = new HashMap<>();
 
 	@Override
 	public void setRequestMethod(String requestMetod) {
@@ -60,14 +64,13 @@ public class HttpHandlerSpy implements HttpHandler {
 
 	@Override
 	public void setOutput(String outputString) {
-		// TODO Auto-generated method stub
+		this.outputString = outputString;
 
 	}
 
 	@Override
 	public void setRequestProperty(String key, String value) {
-		// TODO Auto-generated method stub
-
+		requestProperties.put(key, value);
 	}
 
 	@Override

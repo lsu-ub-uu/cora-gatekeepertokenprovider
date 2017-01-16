@@ -25,14 +25,17 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerFactorySpy;
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerSpy;
+import se.uu.ub.cora.spider.authentication.AuthenticationException;
 
 public class GatekeeperTokenProviderTest {
 	private HttpHandlerSpy httpHandler;
 	private HttpHandlerFactorySpy httpHandlerFactory;
 	private GatekeeperTokenProvider tokenProvider;
+	private UserInfo userInfo;
 
 	@BeforeMethod
 	public void setUp() {
+		userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
 		httpHandlerFactory = new HttpHandlerFactorySpy();
 		String baseUrl = "http://localhost:8080/gatekeeper/";
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
@@ -45,8 +48,33 @@ public class GatekeeperTokenProviderTest {
 		tokenProvider.getAuthTokenForUserInfo(userInfo);
 		httpHandler = httpHandlerFactory.getFactored(0);
 
+		assertEquals(httpHandler.outputString,
+				"{\"children\":[" + "{\"name\":\"idFromLogin\",\"value\":\"someLoginId\"},"
+						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
+						+ "],\"name\":\"userInfo\"}");
+
+		assertEquals(httpHandler.requestProperties.get("Accept"), "application/uub+record+json");
+		assertEquals(httpHandler.requestProperties.get("Content-Type"),
+				"application/uub+record+json");
+		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestMetod, "POST");
 		assertEquals(httpHandler.url, "http://localhost:8080/gatekeeper/rest/authToken");
+	}
+
+	@Test
+	public void testReturnedAuthToken() {
+		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
+		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
+		httpHandler = httpHandlerFactory.getFactored(0);
+
+		assertEquals(authToken.id, "someId");
+		assertEquals(authToken.validForNoSeconds, 400);
+	}
+
+	@Test(expectedExceptions = AuthenticationException.class)
+	public void testUnauthorizedToken() {
+		httpHandlerFactory.setResponseCode(401);
+		tokenProvider.getAuthTokenForUserInfo(userInfo);
 	}
 
 }

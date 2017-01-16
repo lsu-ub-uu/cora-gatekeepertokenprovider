@@ -20,5 +20,5 @@
 package se.uu.ub.cora.gatekeepertokenprovider;
 
 public interface GatekeeperTokenProvider {
-	AuthInfo getAuthTokenForUserInfo(UserInfo userInfo);
+	AuthToken getAuthTokenForUserInfo(UserInfo userInfo);
 }

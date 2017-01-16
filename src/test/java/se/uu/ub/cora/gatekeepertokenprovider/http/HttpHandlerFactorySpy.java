@@ -40,10 +40,9 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 		factored.add(httpHandlerSpy);
 		httpHandlerSpy.setURL(url);
 		httpHandlerSpy.setResponseCode(status);
-		String jsonAnswer = "{\"children\":[{\"children\":[{\"children\":["
-				+ "{\"name\":\"role\",\"value\":\"someRole1\"}],\"name\":\"rolePlus\"}"
-				+ ",{\"children\":[{\"name\":\"role\",\"value\":\"someRole2\"}]"
-				+ ",\"name\":\"rolePlus\"}],\"name\":\"rolesPlus\"}],\"name\":\"someId2\"}";
+		String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"}"
+				+ "],\"name\":\"authToken\"}";
 		httpHandlerSpy.setResponseText(jsonAnswer);
 		return httpHandlerSpy;
 	}
