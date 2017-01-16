@@ -29,7 +29,7 @@ import se.uu.ub.cora.json.parser.JsonParser;
 import se.uu.ub.cora.json.parser.JsonValue;
 import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
-public class JsonToAuthTokenConverter {
+public final class JsonToAuthTokenConverter {
 
 	private static final String CHILDREN = "children";
 
