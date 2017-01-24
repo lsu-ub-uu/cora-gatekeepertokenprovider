@@ -19,11 +19,11 @@
 
 package se.uu.ub.cora.gatekeepertokenprovider;
 
+import se.uu.ub.cora.gatekeepertokenprovider.authentication.AuthenticationException;
 import se.uu.ub.cora.gatekeepertokenprovider.json.JsonToAuthTokenConverter;
 import se.uu.ub.cora.gatekeepertokenprovider.json.UserInfoToJsonConverter;
 import se.uu.ub.cora.httphandler.HttpHandler;
 import se.uu.ub.cora.httphandler.HttpHandlerFactory;
-import se.uu.ub.cora.spider.authentication.AuthenticationException;
 
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
 	private static final int STATUS_OK = 200;

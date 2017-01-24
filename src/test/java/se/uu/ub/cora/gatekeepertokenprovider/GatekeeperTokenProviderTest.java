@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.gatekeepertokenprovider.authentication.AuthenticationException;
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerFactorySpy;
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerSpy;
-import se.uu.ub.cora.spider.authentication.AuthenticationException;
 
 public class GatekeeperTokenProviderTest {
 	private HttpHandlerSpy httpHandler;
