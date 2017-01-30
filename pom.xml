@@ -19,14 +19,14 @@
 	</parent>
 
 	<artifactId>gatekeepertokenprovider</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>gatekeepertokenprovider</name>
 
 	<properties>
 		<json.version>0.3-SNAPSHOT</json.version>
-		<httphandler.version>0.1-SNAPSHOT</httphandler.version>
+		<httphandler.version>0.2-SNAPSHOT</httphandler.version>
 	</properties>
 
 	<scm>
