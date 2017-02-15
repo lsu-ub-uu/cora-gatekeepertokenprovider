@@ -63,4 +63,17 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
 	}
 
+	@Override
+	public void removeAuthTokenForUser(String idInUserStorage, String authToken) {
+		String url = baseUrl + "rest/authToken/" + idInUserStorage;
+
+		HttpHandler httpHandler = httpHandlerFactory.factor(url);
+		httpHandler.setRequestMethod("DELETE");
+		httpHandler.setOutput(authToken);
+
+		if (httpHandler.getResponseCode() != STATUS_OK) {
+			throw new AuthenticationException("AuthToken could not be removed");
+		}
+	}
+
 }

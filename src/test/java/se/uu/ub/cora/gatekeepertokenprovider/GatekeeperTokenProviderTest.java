@@ -77,4 +77,28 @@ public class GatekeeperTokenProviderTest {
 		tokenProvider.getAuthTokenForUserInfo(userInfo);
 	}
 
+	@Test
+	public void testRemoveAuthTokenForUser() {
+		String idInUserStorage = "someIdInUserStorage";
+		String authToken = "someAuthToken";
+		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+
+		httpHandler = httpHandlerFactory.getFactored(0);
+
+		assertEquals(httpHandler.outputString, "someAuthToken");
+
+		assertEquals(httpHandler.requestProperties.size(), 0);
+		assertEquals(httpHandler.requestMetod, "DELETE");
+		assertEquals(httpHandler.url,
+				"http://localhost:8080/gatekeeper/rest/authToken/someIdInUserStorage");
+	}
+
+	@Test(expectedExceptions = AuthenticationException.class)
+	public void testRemoveAuthTokenForUserNotOk() {
+		httpHandlerFactory.setResponseCode(404);
+
+		String idInUserStorage = "someIdInUserStorage";
+		String authToken = "someAuthToken";
+		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+	}
 }
