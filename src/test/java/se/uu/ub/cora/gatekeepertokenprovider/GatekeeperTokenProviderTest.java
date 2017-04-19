@@ -53,9 +53,9 @@ public class GatekeeperTokenProviderTest {
 						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
 						+ "],\"name\":\"userInfo\"}");
 
-		assertEquals(httpHandler.requestProperties.get("Accept"), "application/uub+record+json");
+		assertEquals(httpHandler.requestProperties.get("Accept"), "application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.get("Content-Type"),
-				"application/uub+record+json");
+				"application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestMetod, "POST");
 		assertEquals(httpHandler.url, "http://localhost:8080/gatekeeper/rest/authToken");

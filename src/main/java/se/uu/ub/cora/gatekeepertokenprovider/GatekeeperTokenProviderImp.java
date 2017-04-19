@@ -27,7 +27,7 @@ import se.uu.ub.cora.httphandler.HttpHandlerFactory;
 
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
 	private static final int STATUS_OK = 200;
-	private static final String APPLICATION_UUB_RECORD_JSON = "application/uub+record+json";
+	private static final String APPLICATION_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 	private static final String ACCEPT = "Accept";
 	private String baseUrl;
 	private HttpHandlerFactory httpHandlerFactory;
