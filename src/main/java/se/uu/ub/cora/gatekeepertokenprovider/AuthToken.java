@@ -20,16 +20,19 @@
 package se.uu.ub.cora.gatekeepertokenprovider;
 
 public final class AuthToken {
-	public final String id;
+	public final String token;
 	public final int validForNoSeconds;
+	public String idInUserStorage;
 
-	private AuthToken(String id, int validForNoSeconds) {
-		this.id = id;
+	private AuthToken(String id, int validForNoSeconds, String idInUserStorage) {
+		this.token = id;
 		this.validForNoSeconds = validForNoSeconds;
+		this.idInUserStorage = idInUserStorage;
 	}
 
-	public static AuthToken withIdAndValidForNoSeconds(String id, int validForNoSeconds) {
-		return new AuthToken(id, validForNoSeconds);
+	public static AuthToken withIdAndValidForNoSecondsAndIdInUserStorage(String id, int validForNoSeconds,
+			String idInUserStorage) {
+		return new AuthToken(id, validForNoSeconds, idInUserStorage);
 	}
 
 }

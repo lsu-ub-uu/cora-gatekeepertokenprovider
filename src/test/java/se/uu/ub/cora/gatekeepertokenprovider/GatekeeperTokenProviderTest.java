@@ -67,7 +67,7 @@ public class GatekeeperTokenProviderTest {
 		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
 		httpHandler = httpHandlerFactory.getFactored(0);
 
-		assertEquals(authToken.id, "someId");
+		assertEquals(authToken.token, "someId");
 		assertEquals(authToken.validForNoSeconds, 400);
 	}
 

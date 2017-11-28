@@ -29,12 +29,14 @@ public class JsonToAuthTokenConverterTest {
 	@Test
 	public void testJsonToUserInfoConverter() {
 		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"}"
+				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"}"
 				+ "],\"name\":\"authToken\"}";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
 		AuthToken authToken = converter.parseAuthTokenFromJson();
-		assertEquals(authToken.id, "someId");
+		assertEquals(authToken.token, "someId");
 		assertEquals(authToken.validForNoSeconds, 400);
+		assertEquals(authToken.idInUserStorage, "someIdFromStorage");
 	}
 
 }

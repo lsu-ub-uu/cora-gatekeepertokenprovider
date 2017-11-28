@@ -26,12 +26,13 @@ import org.testng.annotations.Test;
 public class AuthTokenTest {
 	@Test
 	public void test() {
-		String authToken = "someAuthToken";
+		String token = "someAuthToken";
 		int timeToLiveInMilliseconds = 300;
 
-		AuthToken authInfo = AuthToken.withIdAndValidForNoSeconds(authToken,
-				timeToLiveInMilliseconds);
-		assertEquals(authInfo.id, "someAuthToken");
-		assertEquals(authInfo.validForNoSeconds, 300);
+		AuthToken authToken = AuthToken.withIdAndValidForNoSecondsAndIdInUserStorage(token,
+				timeToLiveInMilliseconds, "141414");
+		assertEquals(authToken.token, "someAuthToken");
+		assertEquals(authToken.validForNoSeconds, 300);
+		assertEquals(authToken.idInUserStorage, "141414");
 	}
 }

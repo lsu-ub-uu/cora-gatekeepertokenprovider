@@ -39,5 +39,14 @@ public class UserInfoTest {
 
 		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain(idFromLogin, domainFromLogin);
 		assertEquals(userInfo.idFromLogin, "idFromLogin");
+		assertEquals(userInfo.domainFromLogin, "domainFromLogin");
+	}
+
+	@Test
+	public void testUserInfoWithLoginId() {
+		String idFromLogin = "idFromLogin";
+
+		UserInfo userInfo = UserInfo.withLoginId(idFromLogin);
+		assertEquals(userInfo.idFromLogin, "idFromLogin");
 	}
 }
