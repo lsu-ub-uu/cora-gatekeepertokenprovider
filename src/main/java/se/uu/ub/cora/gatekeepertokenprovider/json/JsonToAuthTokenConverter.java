@@ -63,9 +63,12 @@ public final class JsonToAuthTokenConverter {
 	}
 
 	private AuthToken createAuthTokenFromChildValues(Map<String, String> childValues) {
-		return AuthToken.withIdAndValidForNoSecondsAndIdInUserStorage(childValues.get("id"),
-				Integer.parseInt(childValues.get("validForNoSeconds")),
-				childValues.get("idInUserStorage"));
+		AuthToken authToken = AuthToken.withIdAndValidForNoSecondsAndIdInUserStorageAndIdFromLogin(
+				childValues.get("id"), Integer.parseInt(childValues.get("validForNoSeconds")),
+				childValues.get("idInUserStorage"), childValues.get("idFromLogin"));
+		authToken.firstName = childValues.get("firstName");
+		authToken.lastName = childValues.get("lastName");
+		return authToken;
 	}
 
 }

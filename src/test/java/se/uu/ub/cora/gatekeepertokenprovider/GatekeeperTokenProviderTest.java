@@ -32,12 +32,13 @@ public class GatekeeperTokenProviderTest {
 	private HttpHandlerFactorySpy httpHandlerFactory;
 	private GatekeeperTokenProvider tokenProvider;
 	private UserInfo userInfo;
+	private String baseUrl;
 
 	@BeforeMethod
 	public void setUp() {
 		userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
 		httpHandlerFactory = new HttpHandlerFactorySpy();
-		String baseUrl = "http://localhost:8080/gatekeeper/";
+		baseUrl = "http://localhost:8080/gatekeeper/";
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);
 	}
@@ -68,6 +69,28 @@ public class GatekeeperTokenProviderTest {
 		httpHandler = httpHandlerFactory.getFactored(0);
 
 		assertEquals(authToken.token, "someId");
+		assertEquals(authToken.idFromLogin, "someIdFromLogin");
+		assertEquals(authToken.validForNoSeconds, 400);
+	}
+
+	@Test
+	public void testReturnedAuthTokenWithName() {
+		String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"},"
+				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
+				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}" + "],\"name\":\"authToken\"}";
+		httpHandlerFactory.jsonAnswer = jsonAnswer;
+		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
+				httpHandlerFactory);
+		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
+		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
+		httpHandler = httpHandlerFactory.getFactored(0);
+
+		assertEquals(authToken.token, "someId");
+		assertEquals(authToken.idFromLogin, "someIdFromLogin");
+		assertEquals(authToken.firstName, "someFirstName");
+		assertEquals(authToken.lastName, "someLastName");
 		assertEquals(authToken.validForNoSeconds, 400);
 	}
 

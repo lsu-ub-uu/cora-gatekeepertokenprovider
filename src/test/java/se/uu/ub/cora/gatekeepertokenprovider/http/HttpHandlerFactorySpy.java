@@ -29,6 +29,9 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 
 	public List<HttpHandlerSpy> factored = new ArrayList<>();
 	private int status = 200;
+	public String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+			+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+			+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"}" + "],\"name\":\"authToken\"}";
 
 	public HttpHandlerSpy getFactored(int i) {
 		return factored.get(i);
@@ -40,9 +43,7 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 		factored.add(httpHandlerSpy);
 		httpHandlerSpy.setURL(url);
 		httpHandlerSpy.setResponseCode(status);
-		String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"}"
-				+ "],\"name\":\"authToken\"}";
+
 		httpHandlerSpy.setResponseText(jsonAnswer);
 		return httpHandlerSpy;
 	}
