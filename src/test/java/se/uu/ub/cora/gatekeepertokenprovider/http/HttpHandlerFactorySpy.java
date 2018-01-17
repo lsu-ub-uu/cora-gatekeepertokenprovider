@@ -24,6 +24,7 @@ import java.util.List;
 
 import se.uu.ub.cora.httphandler.HttpHandler;
 import se.uu.ub.cora.httphandler.HttpHandlerFactory;
+import se.uu.ub.cora.httphandler.HttpMultiPartUploader;
 
 public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 
@@ -31,7 +32,8 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 	private int status = 200;
 	public String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
 			+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
-			+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"}" + "],\"name\":\"authToken\"}";
+			+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"}"
+			+ "],\"name\":\"authToken\"}";
 
 	public HttpHandlerSpy getFactored(int i) {
 		return factored.get(i);
@@ -50,6 +52,12 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 
 	public void setResponseCode(int status) {
 		this.status = status;
+	}
+
+	@Override
+	public HttpMultiPartUploader factorHttpMultiPartUploader(String url) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
