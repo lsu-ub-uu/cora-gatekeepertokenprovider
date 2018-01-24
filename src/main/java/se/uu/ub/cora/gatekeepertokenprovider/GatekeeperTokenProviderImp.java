@@ -29,22 +29,23 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	private static final int STATUS_OK = 200;
 	private static final String APPLICATION_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 	private static final String ACCEPT = "Accept";
-	private String baseUrl;
+	private String gatekeeperUrl;
 	private HttpHandlerFactory httpHandlerFactory;
 
-	private GatekeeperTokenProviderImp(String baseUrl, HttpHandlerFactory httpHandlerFactory) {
-		this.baseUrl = baseUrl;
+	private GatekeeperTokenProviderImp(String gatekeeperUrl,
+			HttpHandlerFactory httpHandlerFactory) {
+		this.gatekeeperUrl = gatekeeperUrl;
 		this.httpHandlerFactory = httpHandlerFactory;
 	}
 
-	public static GatekeeperTokenProviderImp usingBaseUrlAndHttpHandlerFactory(String baseUrl,
+	public static GatekeeperTokenProviderImp usingBaseUrlAndHttpHandlerFactory(String gatekeeperUrl,
 			HttpHandlerFactory httpHandlerFactory) {
-		return new GatekeeperTokenProviderImp(baseUrl, httpHandlerFactory);
+		return new GatekeeperTokenProviderImp(gatekeeperUrl, httpHandlerFactory);
 	}
 
 	@Override
 	public AuthToken getAuthTokenForUserInfo(UserInfo userInfo) {
-		String url = baseUrl + "rest/authToken";
+		String url = gatekeeperUrl + "rest/authToken";
 
 		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
 		String json = userInfoToJsonConverter.convertUserInfoToJson();
@@ -56,7 +57,8 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		httpHandler.setOutput(json);
 
 		if (httpHandler.getResponseCode() != STATUS_OK) {
-			throw new AuthenticationException("authToken gives no authorization");
+			throw new AuthenticationException("authToken gives no authorization:"
+					+ httpHandler.getResponseCode() + " url:  " + url + " json: " + json);
 		}
 		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
 				.forJson(httpHandler.getResponseText());
@@ -65,7 +67,7 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 
 	@Override
 	public void removeAuthTokenForUser(String idInUserStorage, String authToken) {
-		String url = baseUrl + "rest/authToken/" + idInUserStorage;
+		String url = gatekeeperUrl + "rest/authToken/" + idInUserStorage;
 
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("DELETE");
