@@ -26,7 +26,7 @@
 
 	<properties>
 		<json.version>0.3-SNAPSHOT</json.version>
-		<httphandler.version>0.2-SNAPSHOT</httphandler.version>
+		<httphandler.version>0.3-SNAPSHOT</httphandler.version>
 	</properties>
 
 	<scm>
