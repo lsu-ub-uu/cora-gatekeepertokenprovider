@@ -25,8 +25,8 @@
 	<name>gatekeepertokenprovider</name>
 
 	<properties>
-		<json.version>0.3-SNAPSHOT</json.version>
-		<httphandler.version>0.3-SNAPSHOT</httphandler.version>
+		<json.version>0.4-SNAPSHOT</json.version>
+		<httphandler.version>0.4-SNAPSHOT</httphandler.version>
 	</properties>
 
 	<scm>
