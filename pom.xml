@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>se.uu.ub.cora</groupId>
 		<artifactId>cora-parent</artifactId>
-		<version>0.8-SNAPSHOT</version>
+		<version>0.8.6</version>
 	</parent>
 
 	<artifactId>gatekeepertokenprovider</artifactId>
@@ -25,14 +25,14 @@
 	<name>gatekeepertokenprovider</name>
 
 	<properties>
-		<json.version>0.5-SNAPSHOT</json.version>
-		<httphandler.version>0.5-SNAPSHOT</httphandler.version>
+		<json.version>0.5.7</json.version>
+		<httphandler.version>0.5.1</httphandler.version>
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/lsu-ub-uu/gatekeepertokenprovider.git</connection>
-		<developerConnection>scm:git:https://github.com/lsu-ub-uu/gatekeepertokenprovider.git</developerConnection>
-		<url>https://github.com/lsu-ub-uu/gatekeepertokenprovider.git</url>
+		<connection>scm:git:https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</connection>
+		<developerConnection>scm:git:https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</developerConnection>
+		<url>https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</url>
 	</scm>
 
 	<dependencies>
