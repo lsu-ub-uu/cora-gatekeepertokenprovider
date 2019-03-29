@@ -56,7 +56,6 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 
 	@Override
 	public HttpMultiPartUploader factorHttpMultiPartUploader(String url) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

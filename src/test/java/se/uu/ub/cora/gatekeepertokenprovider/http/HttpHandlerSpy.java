@@ -75,20 +75,22 @@ public class HttpHandlerSpy implements HttpHandler {
 
 	@Override
 	public String getErrorText() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setStreamOutput(InputStream stream) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public String getHeaderField(String name) {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setBasicAuthorization(String username, String password) {
+
 	}
 
 }
