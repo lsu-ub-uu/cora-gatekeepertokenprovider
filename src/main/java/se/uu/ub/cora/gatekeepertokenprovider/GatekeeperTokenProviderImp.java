@@ -78,4 +78,14 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		}
 	}
 
+	// TODO:test these two
+	public String getGatekeeperUrl() {
+		// needed for test
+		return gatekeeperUrl;
+	}
+
+	public HttpHandlerFactory getHttpHandlerFactory() {
+		// needed for test
+		return httpHandlerFactory;
+	}
 }
