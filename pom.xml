@@ -18,7 +18,7 @@
 	</parent>
 
 	<artifactId>gatekeepertokenprovider</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>gatekeepertokenprovider</name>
@@ -33,7 +33,7 @@
 		<connection>scm:git:https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</connection>
 		<developerConnection>scm:git:https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</developerConnection>
 		<url>https://github.com/lsu-ub-uu/cora-gatekeepertokenprovider.git</url>
-	  <tag>release/1.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<dependencies>
