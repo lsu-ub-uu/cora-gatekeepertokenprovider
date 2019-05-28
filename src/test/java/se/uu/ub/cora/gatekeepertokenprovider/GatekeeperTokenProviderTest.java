@@ -1,5 +1,6 @@
 /*
  * Copyright 2017 Uppsala University Library
+ * Copyright 2019 Olov McKie
  *
  * This file is part of Cora.
  *
@@ -26,6 +27,8 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.gatekeepertokenprovider.authentication.AuthenticationException;
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerFactorySpy;
 import se.uu.ub.cora.gatekeepertokenprovider.http.HttpHandlerSpy;
+import se.uu.ub.cora.gatekeepertokenprovider.log.LoggerFactorySpy;
+import se.uu.ub.cora.logger.LoggerProvider;
 
 public class GatekeeperTokenProviderTest {
 	private HttpHandlerSpy httpHandler;
@@ -33,14 +36,36 @@ public class GatekeeperTokenProviderTest {
 	private GatekeeperTokenProvider tokenProvider;
 	private UserInfo userInfo;
 	private String baseUrl;
+	private LoggerFactorySpy loggerFactorySpy;
+	private String testedClassName = "GatekeeperTokenProviderImp";
 
 	@BeforeMethod
 	public void setUp() {
+		loggerFactorySpy = new LoggerFactorySpy();
+		LoggerProvider.setLoggerFactory(loggerFactorySpy);
 		userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
 		httpHandlerFactory = new HttpHandlerFactorySpy();
 		baseUrl = "http://localhost:8080/gatekeeper/";
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);
+	}
+
+	@Test
+	public void testLogginGatekeeperUrlOnStartup() {
+		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
+				"Using http://localhost:8080/gatekeeper/ as " + "gatekeeperUrl.");
+	}
+
+	@Test
+	public void testGetGatekeeperUrl() {
+		GatekeeperTokenProviderImp tokenProviderImp = (GatekeeperTokenProviderImp) tokenProvider;
+		assertEquals(tokenProviderImp.getGatekeeperUrl(), baseUrl);
+	}
+
+	@Test
+	public void testGetHttpHandlerFactory() {
+		GatekeeperTokenProviderImp tokenProviderImp = (GatekeeperTokenProviderImp) tokenProvider;
+		assertEquals(tokenProviderImp.getHttpHandlerFactory(), httpHandlerFactory);
 	}
 
 	@Test
@@ -54,7 +79,8 @@ public class GatekeeperTokenProviderTest {
 						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
 						+ "],\"name\":\"userInfo\"}");
 
-		assertEquals(httpHandler.requestProperties.get("Accept"), "application/vnd.uub.record+json");
+		assertEquals(httpHandler.requestProperties.get("Accept"),
+				"application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.get("Content-Type"),
 				"application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.size(), 2);
@@ -79,7 +105,8 @@ public class GatekeeperTokenProviderTest {
 				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
 				+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
-				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}" + "],\"name\":\"authToken\"}";
+				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
+				+ "],\"name\":\"authToken\"}";
 		httpHandlerFactory.jsonAnswer = jsonAnswer;
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);

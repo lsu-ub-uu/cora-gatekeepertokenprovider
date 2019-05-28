@@ -24,6 +24,7 @@
 	<name>gatekeepertokenprovider</name>
 
 	<properties>
+		<logger.version>1.0.0</logger.version>
 		<json.version>1.0.0</json.version>
 		<httphandler.version>1.0.0</httphandler.version>
 	</properties>
@@ -36,6 +37,12 @@
   </scm>
 
 	<dependencies>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>logger</artifactId>
+			<version>${logger.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>json</artifactId>

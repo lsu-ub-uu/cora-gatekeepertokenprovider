@@ -1,5 +1,6 @@
 /*
  * Copyright 2017 Uppsala University Library
+ * Copyright 2019 Olov McKie
  *
  * This file is part of Cora.
  *
@@ -24,8 +25,11 @@ import se.uu.ub.cora.gatekeepertokenprovider.json.JsonToAuthTokenConverter;
 import se.uu.ub.cora.gatekeepertokenprovider.json.UserInfoToJsonConverter;
 import se.uu.ub.cora.httphandler.HttpHandler;
 import se.uu.ub.cora.httphandler.HttpHandlerFactory;
+import se.uu.ub.cora.logger.Logger;
+import se.uu.ub.cora.logger.LoggerProvider;
 
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
+	private Logger log = LoggerProvider.getLoggerForClass(GatekeeperTokenProviderImp.class);
 	private static final int STATUS_OK = 200;
 	private static final String APPLICATION_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 	private static final String ACCEPT = "Accept";
@@ -36,6 +40,7 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 			HttpHandlerFactory httpHandlerFactory) {
 		this.gatekeeperUrl = gatekeeperUrl;
 		this.httpHandlerFactory = httpHandlerFactory;
+		log.logInfoUsingMessage("Using " + gatekeeperUrl + " as gatekeeperUrl.");
 	}
 
 	public static GatekeeperTokenProviderImp usingBaseUrlAndHttpHandlerFactory(String gatekeeperUrl,
@@ -78,4 +83,13 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		}
 	}
 
+	public String getGatekeeperUrl() {
+		// needed for test
+		return gatekeeperUrl;
+	}
+
+	public HttpHandlerFactory getHttpHandlerFactory() {
+		// needed for test
+		return httpHandlerFactory;
+	}
 }
