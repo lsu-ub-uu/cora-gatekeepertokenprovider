@@ -25,7 +25,7 @@
 
 	<properties>
 		<logger.version>2.4.0</logger.version>
-		<json.version>3.0.0</json.version>
+		<json.version>3.1.0</json.version>
 		<httphandler.version>2.4.0</httphandler.version>
 	</properties>
 
