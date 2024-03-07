@@ -99,4 +99,10 @@ public class HttpHandlerSpy implements HttpHandler {
 		return null;
 	}
 
+	@Override
+	public Map<String, String> getResponseHeaders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
