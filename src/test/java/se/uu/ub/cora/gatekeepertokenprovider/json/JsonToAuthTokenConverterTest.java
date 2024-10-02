@@ -28,15 +28,18 @@ import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
 public class JsonToAuthTokenConverterTest {
 	@Test
 	public void testJsonToUserInfoConverter() {
-		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
-				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"}"
-				+ "],\"name\":\"authToken\"}";
+				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
+				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
+
 		AuthToken authToken = converter.parseAuthTokenFromJson();
-		assertEquals(authToken.token, "someId");
+
+		assertEquals(authToken.token, "someToken");
 		assertEquals(authToken.validForNoSeconds, 400);
 		assertEquals(authToken.idInUserStorage, "someIdFromStorage");
+		assertEquals(authToken.loginId, "someLoginId");
 	}
 
 }

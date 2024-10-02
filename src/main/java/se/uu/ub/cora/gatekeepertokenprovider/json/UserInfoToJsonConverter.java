@@ -49,7 +49,7 @@ public class UserInfoToJsonConverter {
 		if (idInUserStorageExists()) {
 			addIdInUserStorageToJson(userChildren);
 		} else {
-			addIdFromLoginToJson(userChildren);
+			addLoginIdToJson(userChildren);
 			addDomainFromLoginToJson(userChildren);
 		}
 	}
@@ -70,9 +70,9 @@ public class UserInfoToJsonConverter {
 		return roleBuilder;
 	}
 
-	private void addIdFromLoginToJson(JsonArrayBuilder userChildren) {
-		JsonObjectBuilder id = createObjectBuilderWithName("idFromLogin");
-		id.addKeyString(VALUE, userInfo.idFromLogin);
+	private void addLoginIdToJson(JsonArrayBuilder userChildren) {
+		JsonObjectBuilder id = createObjectBuilderWithName("loginId");
+		id.addKeyString(VALUE, userInfo.loginId);
 		userChildren.addJsonObjectBuilder(id);
 	}
 
