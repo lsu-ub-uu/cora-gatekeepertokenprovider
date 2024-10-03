@@ -131,9 +131,9 @@ public class GatekeeperTokenProviderTest {
 
 	@Test
 	public void testRemoveAuthTokenForUser() {
-		String idInUserStorage = "someIdInUserStorage";
+		String someLoginId = "someLoginId";
 		String authToken = "someAuthToken";
-		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+		tokenProvider.removeAuthTokenForUser(someLoginId, authToken);
 
 		httpHandler = httpHandlerFactory.getFactored(0);
 
@@ -142,15 +142,15 @@ public class GatekeeperTokenProviderTest {
 		assertEquals(httpHandler.requestProperties.size(), 0);
 		assertEquals(httpHandler.requestMetod, "DELETE");
 		assertEquals(httpHandler.url,
-				"http://localhost:8080/gatekeeper/rest/authToken/someIdInUserStorage");
+				"http://localhost:8080/gatekeeper/rest/authToken/someLoginId");
 	}
 
 	@Test(expectedExceptions = AuthenticationException.class)
 	public void testRemoveAuthTokenForUserNotOk() {
 		httpHandlerFactory.setResponseCode(404);
 
-		String idInUserStorage = "someIdInUserStorage";
+		String loginId = "someLoginId";
 		String authToken = "someAuthToken";
-		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+		tokenProvider.removeAuthTokenForUser(loginId, authToken);
 	}
 }
