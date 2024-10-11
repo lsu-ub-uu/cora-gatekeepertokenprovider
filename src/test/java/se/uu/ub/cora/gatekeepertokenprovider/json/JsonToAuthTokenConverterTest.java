@@ -27,16 +27,42 @@ import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
 
 public class JsonToAuthTokenConverterTest {
 	@Test
-	public void testJsonToUserInfoConverter() {
-		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+	public void testJsonToUserInfoConverterWithOutNames() {
+		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
+				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
 				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
-				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"}"
+				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
+				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
+		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
+
+		AuthToken authToken = converter.parseAuthTokenFromJson();
+
+		assertEquals(authToken.token(), "someToken");
+		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
+		assertEquals(authToken.loginId(), "someLoginId");
+	}
+
+	@Test
+	public void testJsonToUserInfoConverterWithNames() {
+		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
+				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
+				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
+				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
+				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
+				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
 				+ "],\"name\":\"authToken\"}";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
+
 		AuthToken authToken = converter.parseAuthTokenFromJson();
-		assertEquals(authToken.token, "someId");
-		assertEquals(authToken.validForNoSeconds, 400);
-		assertEquals(authToken.idInUserStorage, "someIdFromStorage");
+
+		assertEquals(authToken.token(), "someToken");
+		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
+		assertEquals(authToken.loginId(), "someLoginId");
+		assertEquals(authToken.firstName().get(), "someFirstName");
+		assertEquals(authToken.lastName().get(), "someLastName");
 	}
 
 }

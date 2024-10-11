@@ -75,7 +75,7 @@ public class GatekeeperTokenProviderTest {
 		httpHandler = httpHandlerFactory.getFactored(0);
 
 		assertEquals(httpHandler.outputString,
-				"{\"children\":[" + "{\"name\":\"idFromLogin\",\"value\":\"someLoginId\"},"
+				"{\"children\":[" + "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
 						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
 						+ "],\"name\":\"userInfo\"}");
 
@@ -94,16 +94,17 @@ public class GatekeeperTokenProviderTest {
 		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
 		httpHandler = httpHandlerFactory.getFactored(0);
 
-		assertEquals(authToken.token, "someId");
-		assertEquals(authToken.idFromLogin, "someIdFromLogin");
-		assertEquals(authToken.validForNoSeconds, 400);
+		assertEquals(authToken.token(), "someToken");
+		assertEquals(authToken.loginId(), "someLoginId");
+		assertEquals(authToken.validForNoSeconds(), 400);
 	}
 
 	@Test
 	public void testReturnedAuthTokenWithName() {
-		String jsonAnswer = "{\"children\":[" + "{\"name\":\"id\",\"value\":\"someId\"},"
+		String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
+				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
 				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
-				+ "{\"name\":\"idFromLogin\",\"value\":\"someIdFromLogin\"},"
+				+ "{\"name\":\"loginId\",\"value\":\"loginId\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
 				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
 				+ "],\"name\":\"authToken\"}";
@@ -111,14 +112,17 @@ public class GatekeeperTokenProviderTest {
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);
 		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
+
 		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
+
 		httpHandler = httpHandlerFactory.getFactored(0);
 
-		assertEquals(authToken.token, "someId");
-		assertEquals(authToken.idFromLogin, "someIdFromLogin");
-		assertEquals(authToken.firstName, "someFirstName");
-		assertEquals(authToken.lastName, "someLastName");
-		assertEquals(authToken.validForNoSeconds, 400);
+		assertEquals(authToken.token(), "someToken");
+		assertEquals(authToken.tokenId(), "someTokenId");
+		assertEquals(authToken.loginId(), "loginId");
+		assertEquals(authToken.firstName().get(), "someFirstName");
+		assertEquals(authToken.lastName().get(), "someLastName");
+		assertEquals(authToken.validForNoSeconds(), 400);
 	}
 
 	@Test(expectedExceptions = AuthenticationException.class)
@@ -129,26 +133,25 @@ public class GatekeeperTokenProviderTest {
 
 	@Test
 	public void testRemoveAuthTokenForUser() {
-		String idInUserStorage = "someIdInUserStorage";
+		String tokenId = "someTokenId";
 		String authToken = "someAuthToken";
-		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+		tokenProvider.removeAuthToken(tokenId, authToken);
 
 		httpHandler = httpHandlerFactory.getFactored(0);
 
 		assertEquals(httpHandler.outputString, "someAuthToken");
-
 		assertEquals(httpHandler.requestProperties.size(), 0);
 		assertEquals(httpHandler.requestMetod, "DELETE");
 		assertEquals(httpHandler.url,
-				"http://localhost:8080/gatekeeper/rest/authToken/someIdInUserStorage");
+				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
 	}
 
 	@Test(expectedExceptions = AuthenticationException.class)
 	public void testRemoveAuthTokenForUserNotOk() {
 		httpHandlerFactory.setResponseCode(404);
 
-		String idInUserStorage = "someIdInUserStorage";
+		String tokenId = "someTokenId";
 		String authToken = "someAuthToken";
-		tokenProvider.removeAuthTokenForUser(idInUserStorage, authToken);
+		tokenProvider.removeAuthToken(tokenId, authToken);
 	}
 }

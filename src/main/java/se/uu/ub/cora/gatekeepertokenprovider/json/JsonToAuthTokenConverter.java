@@ -21,6 +21,7 @@ package se.uu.ub.cora.gatekeepertokenprovider.json;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
 import se.uu.ub.cora.json.parser.JsonArray;
@@ -63,12 +64,14 @@ public final class JsonToAuthTokenConverter {
 	}
 
 	private AuthToken createAuthTokenFromChildValues(Map<String, String> childValues) {
-		AuthToken authToken = AuthToken.withIdAndValidForNoSecondsAndIdInUserStorageAndIdFromLogin(
-				childValues.get("id"), Integer.parseInt(childValues.get("validForNoSeconds")),
-				childValues.get("idInUserStorage"), childValues.get("idFromLogin"));
-		authToken.firstName = childValues.get("firstName");
-		authToken.lastName = childValues.get("lastName");
-		return authToken;
+		return new AuthToken(childValues.get("token"), childValues.get("tokenId"),
+				Integer.parseInt(childValues.get("validForNoSeconds")),
+				childValues.get("idInUserStorage"), childValues.get("loginId"),
+				Optional.ofNullable(childValues.get("firstName")),
+				Optional.ofNullable(childValues.get("lastName")));
+		// authToken.firstName = childValues.get("firstName");
+		// authToken.lastName = childValues.get("lastName");
+		// return authToken;
 	}
 
 }

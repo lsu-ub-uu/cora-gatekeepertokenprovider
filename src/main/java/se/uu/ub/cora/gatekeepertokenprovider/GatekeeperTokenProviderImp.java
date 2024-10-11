@@ -71,9 +71,8 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	}
 
 	@Override
-	public void removeAuthTokenForUser(String idInUserStorage, String authToken) {
-		String url = gatekeeperUrl + "rest/authToken/" + idInUserStorage;
-
+	public void removeAuthToken(String tokenId, String authToken) {
+		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("DELETE");
 		httpHandler.setOutput(authToken);

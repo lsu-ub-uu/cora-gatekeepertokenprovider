@@ -22,5 +22,5 @@ package se.uu.ub.cora.gatekeepertokenprovider;
 public interface GatekeeperTokenProvider {
 	AuthToken getAuthTokenForUserInfo(UserInfo userInfo);
 
-	void removeAuthTokenForUser(String idInUserStorage, String authToken);
+	void removeAuthToken(String tokenId, String authToken);
 }

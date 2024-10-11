@@ -32,8 +32,7 @@ public class UserInfoToJsonConverterTest {
 		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someDomain");
 		UserInfoToJsonConverter converter = new UserInfoToJsonConverter(userInfo);
 		String json = converter.convertUserInfoToJson();
-		String expected = "{\"children\":["
-				+ "{\"name\":\"idFromLogin\",\"value\":\"someLoginId\"},"
+		String expected = "{\"children\":[" + "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
 				+ "{\"name\":\"domainFromLogin\",\"value\":\"someDomain\"}"
 				+ "],\"name\":\"userInfo\"}";
 		assertEquals(json, expected);
@@ -45,8 +44,7 @@ public class UserInfoToJsonConverterTest {
 		userInfo.idInUserStorage = "";
 		UserInfoToJsonConverter converter = new UserInfoToJsonConverter(userInfo);
 		String json = converter.convertUserInfoToJson();
-		String expected = "{\"children\":["
-				+ "{\"name\":\"idFromLogin\",\"value\":\"someLoginId\"},"
+		String expected = "{\"children\":[" + "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
 				+ "{\"name\":\"domainFromLogin\",\"value\":\"someDomain\"}"
 				+ "],\"name\":\"userInfo\"}";
 		assertEquals(json, expected);

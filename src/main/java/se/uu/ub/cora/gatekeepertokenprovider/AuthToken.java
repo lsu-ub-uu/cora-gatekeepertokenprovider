@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Uppsala University Library
+ * Copyright 2017, 2024 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -19,25 +19,9 @@
 
 package se.uu.ub.cora.gatekeepertokenprovider;
 
-public final class AuthToken {
+import java.util.Optional;
 
-	public final String token;
-	public final int validForNoSeconds;
-	public final String idInUserStorage;
-	public final String idFromLogin;
-	public String firstName;
-	public String lastName;
-
-	private AuthToken(String id, int validForNoSeconds, String idInUserStorage, String idFromLogin) {
-		this.token = id;
-		this.validForNoSeconds = validForNoSeconds;
-		this.idInUserStorage = idInUserStorage;
-		this.idFromLogin = idFromLogin;
-	}
-
-	public static AuthToken withIdAndValidForNoSecondsAndIdInUserStorageAndIdFromLogin(String id,
-			int validForNoSeconds, String idInUserStorage, String idFromLogin) {
-		return new AuthToken(id, validForNoSeconds, idInUserStorage, idFromLogin);
-	}
-
+public final record AuthToken(String token, String tokenId, int validForNoSeconds,
+		String idInUserStorage, String loginId, Optional<String> firstName,
+		Optional<String> lastName) {
 }
