@@ -56,12 +56,12 @@ public class UserInfoToJsonConverter {
 
 	private void addIdInUserStorageToJson(JsonArrayBuilder userChildren) {
 		JsonObjectBuilder id = createObjectBuilderWithName("idInUserStorage");
-		id.addKeyString(VALUE, userInfo.idInUserStorage);
+		id.addKeyString(VALUE, userInfo.userId);
 		userChildren.addJsonObjectBuilder(id);
 	}
 
 	private boolean idInUserStorageExists() {
-		return userInfo.idInUserStorage != null && !"".equals(userInfo.idInUserStorage);
+		return userInfo.userId != null && !"".equals(userInfo.userId);
 	}
 
 	private JsonObjectBuilder createObjectBuilderWithName(String name) {

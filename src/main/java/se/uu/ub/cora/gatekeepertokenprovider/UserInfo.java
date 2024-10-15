@@ -23,15 +23,15 @@ public final class UserInfo {
 
 	public String loginId;
 	public String domainFromLogin;
-	public String idInUserStorage;
+	public String userId;
 
 	private UserInfo(String loginId, String domainFromLogin) {
 		this.loginId = loginId;
 		this.domainFromLogin = domainFromLogin;
 	}
 
-	private UserInfo(String idInUserStorage) {
-		this.idInUserStorage = idInUserStorage;
+	private UserInfo(String userId) {
+		this.userId = userId;
 	}
 
 	private UserInfo() {
@@ -41,8 +41,8 @@ public final class UserInfo {
 		return new UserInfo(loginId, domainFromLogin);
 	}
 
-	public static UserInfo withIdInUserStorage(String idInUserStorage) {
-		return new UserInfo(idInUserStorage);
+	public static UserInfo withUserId(String userId) {
+		return new UserInfo(userId);
 	}
 
 	public static UserInfo withLoginId(String loginId) {

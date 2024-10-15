@@ -28,8 +28,8 @@ public class UserInfoTest {
 	public void testUserInfoUserInStorage() {
 		String idInUserStorage = "someIdFromStorage";
 
-		UserInfo userInfo = UserInfo.withIdInUserStorage(idInUserStorage);
-		assertEquals(userInfo.idInUserStorage, "someIdFromStorage");
+		UserInfo userInfo = UserInfo.withUserId(idInUserStorage);
+		assertEquals(userInfo.userId, "someIdFromStorage");
 	}
 
 	@Test

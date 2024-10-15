@@ -41,7 +41,7 @@ public class UserInfoToJsonConverterTest {
 	@Test
 	public void testAuthTokenToJsonConverterEmptyIdInStorage() {
 		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someDomain");
-		userInfo.idInUserStorage = "";
+		userInfo.userId = "";
 		UserInfoToJsonConverter converter = new UserInfoToJsonConverter(userInfo);
 		String json = converter.convertUserInfoToJson();
 		String expected = "{\"children\":[" + "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
@@ -52,7 +52,7 @@ public class UserInfoToJsonConverterTest {
 
 	@Test
 	public void testAuthTokenToJsonConverterWithIdInUserStorage() {
-		UserInfo userInfo = UserInfo.withIdInUserStorage("someId");
+		UserInfo userInfo = UserInfo.withUserId("someId");
 		UserInfoToJsonConverter converter = new UserInfoToJsonConverter(userInfo);
 		String json = converter.convertUserInfoToJson();
 		String expected = "{\"children\":[" + "{\"name\":\"idInUserStorage\",\"value\":\"someId\"}"
