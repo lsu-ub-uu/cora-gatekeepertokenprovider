@@ -32,7 +32,7 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 	private int status = 200;
 	public String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 			+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-			+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
+			+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 			+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
 
 	public HttpHandlerSpy getFactored(int i) {

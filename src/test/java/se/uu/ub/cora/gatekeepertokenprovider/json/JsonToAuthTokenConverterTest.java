@@ -31,7 +31,7 @@ public class JsonToAuthTokenConverterTest {
 		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
 				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-				+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
+				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
@@ -40,7 +40,7 @@ public class JsonToAuthTokenConverterTest {
 
 		assertEquals(authToken.token(), "someToken");
 		assertEquals(authToken.validUntil(), 100L);
-		assertEquals(authToken.renewableUntil(), 200L);
+		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
 		assertEquals(authToken.loginId(), "someLoginId");
 	}
@@ -50,7 +50,7 @@ public class JsonToAuthTokenConverterTest {
 		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
 				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-				+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
+				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
@@ -62,7 +62,7 @@ public class JsonToAuthTokenConverterTest {
 
 		assertEquals(authToken.token(), "someToken");
 		assertEquals(authToken.validUntil(), 100L);
-		assertEquals(authToken.renewableUntil(), 200L);
+		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
 		assertEquals(authToken.loginId(), "someLoginId");
 		assertEquals(authToken.firstName().get(), "someFirstName");

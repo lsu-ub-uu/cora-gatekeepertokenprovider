@@ -97,7 +97,7 @@ public class GatekeeperTokenProviderTest {
 		assertEquals(authToken.token(), "someToken");
 		assertEquals(authToken.loginId(), "someLoginId");
 		assertEquals(authToken.validUntil(), 100L);
-		assertEquals(authToken.renewableUntil(), 200L);
+		assertEquals(authToken.renewUntil(), 200L);
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class GatekeeperTokenProviderTest {
 		String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
 				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-				+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
+				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"loginId\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
 				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
@@ -125,7 +125,7 @@ public class GatekeeperTokenProviderTest {
 		assertEquals(authToken.firstName().get(), "someFirstName");
 		assertEquals(authToken.lastName().get(), "someLastName");
 		assertEquals(authToken.validUntil(), 100L);
-		assertEquals(authToken.renewableUntil(), 200L);
+		assertEquals(authToken.renewUntil(), 200L);
 	}
 
 	@Test(expectedExceptions = AuthenticationException.class)
