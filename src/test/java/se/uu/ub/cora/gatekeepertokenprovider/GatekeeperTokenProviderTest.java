@@ -96,14 +96,16 @@ public class GatekeeperTokenProviderTest {
 
 		assertEquals(authToken.token(), "someToken");
 		assertEquals(authToken.loginId(), "someLoginId");
-		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewableUntil(), 200L);
 	}
 
 	@Test
 	public void testReturnedAuthTokenWithName() {
 		String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
+				+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"loginId\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
 				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
@@ -122,7 +124,8 @@ public class GatekeeperTokenProviderTest {
 		assertEquals(authToken.loginId(), "loginId");
 		assertEquals(authToken.firstName().get(), "someFirstName");
 		assertEquals(authToken.lastName().get(), "someLastName");
-		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewableUntil(), 200L);
 	}
 
 	@Test(expectedExceptions = AuthenticationException.class)

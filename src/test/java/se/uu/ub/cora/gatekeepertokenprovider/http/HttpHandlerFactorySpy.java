@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Uppsala University Library
+ * Copyright 2016, 2024 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -31,7 +31,8 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 	public List<HttpHandlerSpy> factored = new ArrayList<>();
 	private int status = 200;
 	public String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
-			+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+			+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
+			+ "{\"name\":\"renewableUntil\",\"value\":\"200\"},"
 			+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
 
 	public HttpHandlerSpy getFactored(int i) {

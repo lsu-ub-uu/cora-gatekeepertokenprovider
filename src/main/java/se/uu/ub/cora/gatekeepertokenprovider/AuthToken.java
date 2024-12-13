@@ -21,7 +21,7 @@ package se.uu.ub.cora.gatekeepertokenprovider;
 
 import java.util.Optional;
 
-public final record AuthToken(String token, String tokenId, int validForNoSeconds,
+public final record AuthToken(String token, String tokenId, long validUntil, long renewableUntil,
 		String idInUserStorage, String loginId, Optional<String> firstName,
 		Optional<String> lastName) {
 }
