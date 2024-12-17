@@ -30,14 +30,28 @@ public interface GatekeeperTokenProvider {
 	AuthToken getAuthTokenForUserInfo(UserInfo userInfo);
 
 	/**
+	 * Renews an existing authentication token from Gatekeeper system.
+	 *
+	 * @param tokenId
+	 *            the unique identifier of the token to be removed
+	 * @param token
+	 *            the authentication token to be removed
+	 * @throws AuthenticationException
+	 *             if the token cannot be removed due to authorization issues
+	 * @return the previoues {@link AuthToken} with a new token and validUntil.
+	 */
+	AuthToken renewAuthToken(String tokenId, String token);
+
+	/**
 	 * Removes an existing authentication token from Gatekeeper system.
 	 *
 	 * @param tokenId
 	 *            the unique identifier of the token to be removed
-	 * @param authToken
+	 * @param token
 	 *            the authentication token to be removed
 	 * @throws AuthenticationException
 	 *             if the token cannot be removed due to authorization issues
 	 */
-	void removeAuthToken(String tokenId, String authToken);
+	void removeAuthToken(String tokenId, String token);
+
 }

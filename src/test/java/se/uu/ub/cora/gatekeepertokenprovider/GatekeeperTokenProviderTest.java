@@ -135,10 +135,34 @@ public class GatekeeperTokenProviderTest {
 	}
 
 	@Test
+	public void testRenewAuthToken() throws Exception {
+		String tokenId = "someTokenId";
+		String token = "someToken";
+
+		AuthToken authToken = tokenProvider.renewAuthToken(tokenId, token);
+
+		httpHandler = httpHandlerFactory.getFactored(0);
+
+		assertEquals(httpHandler.outputString, "someToken");
+		assertEquals(httpHandler.requestProperties.size(), 0);
+		assertEquals(httpHandler.requestMetod, "POST");
+		assertEquals(httpHandler.url,
+				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
+
+		assertEquals(authToken.token(), "someToken");
+		assertEquals(authToken.tokenId(), "someTokenId");
+		assertEquals(authToken.loginId(), "loginId");
+		assertEquals(authToken.firstName().get(), "someFirstName");
+		assertEquals(authToken.lastName().get(), "someLastName");
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
+	}
+
+	@Test
 	public void testRemoveAuthTokenForUser() {
 		String tokenId = "someTokenId";
-		String authToken = "someAuthToken";
-		tokenProvider.removeAuthToken(tokenId, authToken);
+		String token = "someAuthToken";
+		tokenProvider.removeAuthToken(tokenId, token);
 
 		httpHandler = httpHandlerFactory.getFactored(0);
 

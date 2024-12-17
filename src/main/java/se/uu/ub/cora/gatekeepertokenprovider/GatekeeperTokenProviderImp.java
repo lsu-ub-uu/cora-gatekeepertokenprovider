@@ -71,6 +71,19 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	}
 
 	@Override
+	public AuthToken renewAuthToken(String tokenId, String token) {
+		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
+		HttpHandler httpHandler = httpHandlerFactory.factor(url);
+		httpHandler.setRequestMethod("POST");
+		httpHandler.setOutput(token);
+
+		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
+				.forJson(httpHandler.getResponseText());
+		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
+
+	}
+
+	@Override
 	public void removeAuthToken(String tokenId, String authToken) {
 		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
@@ -91,4 +104,5 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		// needed for test
 		return httpHandlerFactory;
 	}
+
 }
