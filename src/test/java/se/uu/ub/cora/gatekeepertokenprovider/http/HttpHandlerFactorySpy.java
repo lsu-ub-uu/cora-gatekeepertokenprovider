@@ -30,10 +30,7 @@ public class HttpHandlerFactorySpy implements HttpHandlerFactory {
 
 	public List<HttpHandlerSpy> factored = new ArrayList<>();
 	private int status = 200;
-	public String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
-			+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-			+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
-			+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
+	public String jsonAnswer = "{}";
 
 	public HttpHandlerSpy getFactored(int i) {
 		return factored.get(i);

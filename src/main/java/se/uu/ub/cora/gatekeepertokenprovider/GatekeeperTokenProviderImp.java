@@ -51,22 +51,31 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	@Override
 	public AuthToken getAuthTokenForUserInfo(UserInfo userInfo) {
 		String url = gatekeeperUrl + "rest/authToken";
-
-		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
-		String json = userInfoToJsonConverter.convertUserInfoToJson();
-
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
 		httpHandler.setRequestProperty(ACCEPT, APPLICATION_UUB_RECORD_JSON);
 		httpHandler.setRequestProperty("Content-Type", APPLICATION_UUB_RECORD_JSON);
-		httpHandler.setOutput(json);
+		httpHandler.setOutput(convertUserInfoToJson(userInfo));
 
-		if (httpHandler.getResponseCode() != STATUS_OK) {
-			throw new AuthenticationException("authToken gives no authorization:"
-					+ httpHandler.getResponseCode() + " url:  " + url + " json: " + json);
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken cannot be created");
+		return convertJsonToAuthToken(httpHandler.getResponseText());
+	}
+
+	private String convertUserInfoToJson(UserInfo userInfo) {
+		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
+		return userInfoToJsonConverter.convertUserInfoToJson();
+	}
+
+	private void ifStatusNokThrowAuthenticationException(int responseCode, String errorMessage) {
+		if (responseCode != STATUS_OK) {
+			throw new AuthenticationException(errorMessage);
 		}
+	}
+
+	private AuthToken convertJsonToAuthToken(String responseText) {
 		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
-				.forJson(httpHandler.getResponseText());
+				.forJson(responseText);
 		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
 	}
 
@@ -77,9 +86,9 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		httpHandler.setRequestMethod("POST");
 		httpHandler.setOutput(token);
 
-		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
-				.forJson(httpHandler.getResponseText());
-		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken could not be renewed");
+		return convertJsonToAuthToken(httpHandler.getResponseText());
 
 	}
 
@@ -90,18 +99,15 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		httpHandler.setRequestMethod("DELETE");
 		httpHandler.setOutput(authToken);
 
-		if (httpHandler.getResponseCode() != STATUS_OK) {
-			throw new AuthenticationException("AuthToken could not be removed");
-		}
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken could not be removed");
 	}
 
-	public String getGatekeeperUrl() {
-		// needed for test
+	public String onlyForTestGetGatekeeperUrl() {
 		return gatekeeperUrl;
 	}
 
-	public HttpHandlerFactory getHttpHandlerFactory() {
-		// needed for test
+	public HttpHandlerFactory onlyForTersGetHttpHandlerFactory() {
 		return httpHandlerFactory;
 	}
 
