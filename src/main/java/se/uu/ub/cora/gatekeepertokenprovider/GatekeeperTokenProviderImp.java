@@ -84,6 +84,8 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
+		httpHandler.setRequestProperty("Content-Type", "text/plain");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
 		httpHandler.setOutput(token);
 
 		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),

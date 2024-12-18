@@ -142,8 +142,11 @@ public class GatekeeperTokenProviderTest {
 
 		httpHandler = httpHandlerFactory.getFactored(0);
 		assertEquals(httpHandler.outputString, TOKEN);
-		assertEquals(httpHandler.requestProperties.size(), 0);
 		assertEquals(httpHandler.requestMetod, "POST");
+		assertEquals(httpHandler.requestProperties.size(), 2);
+		assertEquals(httpHandler.requestProperties.get("Content-Type"), "text/plain");
+		assertEquals(httpHandler.requestProperties.get("Accept"),
+				"application/vnd.uub.authToken+json");
 		assertEquals(httpHandler.url,
 				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
 	}
