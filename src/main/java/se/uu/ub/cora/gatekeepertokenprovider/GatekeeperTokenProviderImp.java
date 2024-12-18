@@ -31,7 +31,6 @@ import se.uu.ub.cora.logger.LoggerProvider;
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
 	private Logger log = LoggerProvider.getLoggerForClass(GatekeeperTokenProviderImp.class);
 	private static final int STATUS_OK = 200;
-	private static final String APPLICATION_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 	private static final String ACCEPT = "Accept";
 	private String gatekeeperUrl;
 	private HttpHandlerFactory httpHandlerFactory;
@@ -53,8 +52,8 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		String url = gatekeeperUrl + "rest/authToken";
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
-		httpHandler.setRequestProperty(ACCEPT, APPLICATION_UUB_RECORD_JSON);
-		httpHandler.setRequestProperty("Content-Type", APPLICATION_UUB_RECORD_JSON);
+		httpHandler.setRequestProperty("Content-Type", "application/vnd.uub.userInfo+json");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
 		httpHandler.setOutput(convertUserInfoToJson(userInfo));
 
 		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
@@ -99,6 +98,7 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("DELETE");
+		httpHandler.setRequestProperty("Content-Type", "text/plain");
 		httpHandler.setOutput(authToken);
 
 		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),

@@ -82,10 +82,10 @@ public class GatekeeperTokenProviderTest {
 						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
 						+ "],\"name\":\"userInfo\"}");
 
-		assertEquals(httpHandler.requestProperties.get("Accept"),
-				"application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.get("Content-Type"),
-				"application/vnd.uub.record+json");
+				"application/vnd.uub.userInfo+json");
+		assertEquals(httpHandler.requestProperties.get("Accept"),
+				"application/vnd.uub.authToken+json");
 		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestMetod, "POST");
 		assertEquals(httpHandler.url, "http://localhost:8080/gatekeeper/rest/authToken");
@@ -178,8 +178,9 @@ public class GatekeeperTokenProviderTest {
 		httpHandler = httpHandlerFactory.getFactored(0);
 
 		assertEquals(httpHandler.outputString, "someAuthToken");
-		assertEquals(httpHandler.requestProperties.size(), 0);
+		assertEquals(httpHandler.requestProperties.size(), 1);
 		assertEquals(httpHandler.requestMetod, "DELETE");
+		assertEquals(httpHandler.requestProperties.get("Content-Type"), "text/plain");
 		assertEquals(httpHandler.url,
 				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
 	}
