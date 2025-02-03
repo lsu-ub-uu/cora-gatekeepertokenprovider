@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Uppsala University Library
+ * Copyright 2017, 2024 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -65,13 +65,9 @@ public final class JsonToAuthTokenConverter {
 
 	private AuthToken createAuthTokenFromChildValues(Map<String, String> childValues) {
 		return new AuthToken(childValues.get("token"), childValues.get("tokenId"),
-				Integer.parseInt(childValues.get("validForNoSeconds")),
-				childValues.get("idInUserStorage"), childValues.get("loginId"),
-				Optional.ofNullable(childValues.get("firstName")),
+				Long.parseLong(childValues.get("validUntil")),
+				Long.parseLong(childValues.get("renewUntil")), childValues.get("idInUserStorage"),
+				childValues.get("loginId"), Optional.ofNullable(childValues.get("firstName")),
 				Optional.ofNullable(childValues.get("lastName")));
-		// authToken.firstName = childValues.get("firstName");
-		// authToken.lastName = childValues.get("lastName");
-		// return authToken;
 	}
-
 }

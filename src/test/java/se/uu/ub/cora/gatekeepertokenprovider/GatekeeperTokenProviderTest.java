@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Uppsala University Library
+ * Copyright 2017, 2024 Uppsala University Library
  * Copyright 2019 Olov McKie
  *
  * This file is part of Cora.
@@ -31,6 +31,8 @@ import se.uu.ub.cora.gatekeepertokenprovider.log.LoggerFactorySpy;
 import se.uu.ub.cora.logger.LoggerProvider;
 
 public class GatekeeperTokenProviderTest {
+	private static final String TOKEN_ID = "someTokenId";
+	private static final String TOKEN = "someToken";
 	private HttpHandlerSpy httpHandler;
 	private HttpHandlerFactorySpy httpHandlerFactory;
 	private GatekeeperTokenProvider tokenProvider;
@@ -48,6 +50,8 @@ public class GatekeeperTokenProviderTest {
 		baseUrl = "http://localhost:8080/gatekeeper/";
 		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
 				httpHandlerFactory);
+
+		httpHandlerFactory.jsonAnswer = authTokenAsJson();
 	}
 
 	@Test
@@ -59,18 +63,17 @@ public class GatekeeperTokenProviderTest {
 	@Test
 	public void testGetGatekeeperUrl() {
 		GatekeeperTokenProviderImp tokenProviderImp = (GatekeeperTokenProviderImp) tokenProvider;
-		assertEquals(tokenProviderImp.getGatekeeperUrl(), baseUrl);
+		assertEquals(tokenProviderImp.onlyForTestGetGatekeeperUrl(), baseUrl);
 	}
 
 	@Test
 	public void testGetHttpHandlerFactory() {
 		GatekeeperTokenProviderImp tokenProviderImp = (GatekeeperTokenProviderImp) tokenProvider;
-		assertEquals(tokenProviderImp.getHttpHandlerFactory(), httpHandlerFactory);
+		assertEquals(tokenProviderImp.onlyForTersGetHttpHandlerFactory(), httpHandlerFactory);
 	}
 
 	@Test
 	public void testHttpHandlerCalledCorrectly() {
-		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
 		tokenProvider.getAuthTokenForUserInfo(userInfo);
 		httpHandler = httpHandlerFactory.getFactored(0);
 
@@ -79,10 +82,10 @@ public class GatekeeperTokenProviderTest {
 						+ "{\"name\":\"domainFromLogin\",\"value\":\"someLoginDomain\"}"
 						+ "],\"name\":\"userInfo\"}");
 
-		assertEquals(httpHandler.requestProperties.get("Accept"),
-				"application/vnd.uub.record+json");
 		assertEquals(httpHandler.requestProperties.get("Content-Type"),
-				"application/vnd.uub.record+json");
+				"application/vnd.uub.userInfo+json");
+		assertEquals(httpHandler.requestProperties.get("Accept"),
+				"application/vnd.uub.authToken+json");
 		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestMetod, "POST");
 		assertEquals(httpHandler.url, "http://localhost:8080/gatekeeper/rest/authToken");
@@ -90,67 +93,104 @@ public class GatekeeperTokenProviderTest {
 
 	@Test
 	public void testReturnedAuthToken() {
-		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
 		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
-		httpHandler = httpHandlerFactory.getFactored(0);
 
-		assertEquals(authToken.token(), "someToken");
-		assertEquals(authToken.loginId(), "someLoginId");
-		assertEquals(authToken.validForNoSeconds(), 400);
+		httpHandler = httpHandlerFactory.getFactored(0);
+		assertEquals(authToken.token(), TOKEN);
+		assertEquals(authToken.tokenId(), TOKEN_ID);
+		assertEquals(authToken.loginId(), "loginId");
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
 	}
 
 	@Test
 	public void testReturnedAuthTokenWithName() {
-		String jsonAnswer = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
-				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
-				+ "{\"name\":\"loginId\",\"value\":\"loginId\"},"
-				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
-				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
-				+ "],\"name\":\"authToken\"}";
-		httpHandlerFactory.jsonAnswer = jsonAnswer;
-		tokenProvider = GatekeeperTokenProviderImp.usingBaseUrlAndHttpHandlerFactory(baseUrl,
-				httpHandlerFactory);
-		UserInfo userInfo = UserInfo.withLoginIdAndLoginDomain("someLoginId", "someLoginDomain");
-
 		AuthToken authToken = tokenProvider.getAuthTokenForUserInfo(userInfo);
 
 		httpHandler = httpHandlerFactory.getFactored(0);
-
-		assertEquals(authToken.token(), "someToken");
-		assertEquals(authToken.tokenId(), "someTokenId");
+		assertEquals(authToken.token(), TOKEN);
+		assertEquals(authToken.tokenId(), TOKEN_ID);
 		assertEquals(authToken.loginId(), "loginId");
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.firstName().get(), "someFirstName");
 		assertEquals(authToken.lastName().get(), "someLastName");
-		assertEquals(authToken.validForNoSeconds(), 400);
 	}
 
-	@Test(expectedExceptions = AuthenticationException.class)
+	private String authTokenAsJson() {
+		return """
+				{"children":[{"name":"token","value":"someToken"},
+				{"name":"tokenId","value":"someTokenId"},
+				{"name":"validUntil","value":"100"},
+				{"name":"renewUntil","value":"200"},
+				{"name":"loginId","value":"loginId"},
+				{"name":"firstName","value":"someFirstName"},
+				{"name":"lastName","value":"someLastName"}
+				],"name":"authToken"}""".replace("\n", "");
+	}
+
+	@Test(expectedExceptions = AuthenticationException.class, expectedExceptionsMessageRegExp = ""
+			+ "AuthToken cannot be created")
 	public void testUnauthorizedToken() {
 		httpHandlerFactory.setResponseCode(401);
 		tokenProvider.getAuthTokenForUserInfo(userInfo);
 	}
 
 	@Test
-	public void testRemoveAuthTokenForUser() {
-		String tokenId = "someTokenId";
-		String authToken = "someAuthToken";
-		tokenProvider.removeAuthToken(tokenId, authToken);
+	public void testRenewAuthTokenHttpCall() throws Exception {
+		tokenProvider.renewAuthToken(TOKEN_ID, TOKEN);
 
 		httpHandler = httpHandlerFactory.getFactored(0);
-
-		assertEquals(httpHandler.outputString, "someAuthToken");
-		assertEquals(httpHandler.requestProperties.size(), 0);
-		assertEquals(httpHandler.requestMetod, "DELETE");
+		assertEquals(httpHandler.outputString, TOKEN);
+		assertEquals(httpHandler.requestMetod, "POST");
+		assertEquals(httpHandler.requestProperties.size(), 2);
+		assertEquals(httpHandler.requestProperties.get("Content-Type"), "text/plain");
+		assertEquals(httpHandler.requestProperties.get("Accept"),
+				"application/vnd.uub.authToken+json");
 		assertEquals(httpHandler.url,
 				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
 	}
 
-	@Test(expectedExceptions = AuthenticationException.class)
+	@Test
+	public void testRenewAuthTokenOk() throws Exception {
+		AuthToken authToken = tokenProvider.renewAuthToken(TOKEN_ID, TOKEN);
+
+		assertEquals(authToken.token(), TOKEN);
+		assertEquals(authToken.tokenId(), TOKEN_ID);
+		assertEquals(authToken.loginId(), "loginId");
+		assertEquals(authToken.firstName().get(), "someFirstName");
+		assertEquals(authToken.lastName().get(), "someLastName");
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
+	}
+
+	@Test(expectedExceptions = AuthenticationException.class, expectedExceptionsMessageRegExp = ""
+			+ "AuthToken could not be renewed")
+	public void testRenewAuthTokenUnauthorized() throws Exception {
+		httpHandlerFactory.setResponseCode(401);
+		tokenProvider.renewAuthToken(TOKEN_ID, TOKEN);
+	}
+
+	@Test
+	public void testRemoveAuthTokenForUser() {
+		tokenProvider.removeAuthToken(TOKEN_ID, "someAuthToken");
+
+		httpHandler = httpHandlerFactory.getFactored(0);
+
+		assertEquals(httpHandler.outputString, "someAuthToken");
+		assertEquals(httpHandler.requestProperties.size(), 1);
+		assertEquals(httpHandler.requestMetod, "DELETE");
+		assertEquals(httpHandler.requestProperties.get("Content-Type"), "text/plain");
+		assertEquals(httpHandler.url,
+				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
+	}
+
+	@Test(expectedExceptions = AuthenticationException.class, expectedExceptionsMessageRegExp = ""
+			+ "AuthToken could not be removed")
 	public void testRemoveAuthTokenForUserNotOk() {
 		httpHandlerFactory.setResponseCode(404);
 
-		String tokenId = "someTokenId";
+		String tokenId = TOKEN_ID;
 		String authToken = "someAuthToken";
 		tokenProvider.removeAuthToken(tokenId, authToken);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Uppsala University Library
+ * Copyright 2016, 2024 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -30,7 +30,8 @@ public class JsonToAuthTokenConverterTest {
 	public void testJsonToUserInfoConverterWithOutNames() {
 		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
+				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
@@ -38,7 +39,8 @@ public class JsonToAuthTokenConverterTest {
 		AuthToken authToken = converter.parseAuthTokenFromJson();
 
 		assertEquals(authToken.token(), "someToken");
-		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
 		assertEquals(authToken.loginId(), "someLoginId");
 	}
@@ -47,7 +49,8 @@ public class JsonToAuthTokenConverterTest {
 	public void testJsonToUserInfoConverterWithNames() {
 		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
 				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validForNoSeconds\",\"value\":\"400\"},"
+				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
+				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
 				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
 				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
 				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
@@ -58,7 +61,8 @@ public class JsonToAuthTokenConverterTest {
 		AuthToken authToken = converter.parseAuthTokenFromJson();
 
 		assertEquals(authToken.token(), "someToken");
-		assertEquals(authToken.validForNoSeconds(), 400);
+		assertEquals(authToken.validUntil(), 100L);
+		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
 		assertEquals(authToken.loginId(), "someLoginId");
 		assertEquals(authToken.firstName().get(), "someFirstName");

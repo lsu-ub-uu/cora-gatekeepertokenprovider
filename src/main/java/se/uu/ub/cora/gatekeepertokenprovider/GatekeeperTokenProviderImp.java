@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Uppsala University Library
+ * Copyright 2017, 2024 Uppsala University Library
  * Copyright 2019 Olov McKie
  *
  * This file is part of Cora.
@@ -31,7 +31,6 @@ import se.uu.ub.cora.logger.LoggerProvider;
 public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider {
 	private Logger log = LoggerProvider.getLoggerForClass(GatekeeperTokenProviderImp.class);
 	private static final int STATUS_OK = 200;
-	private static final String APPLICATION_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 	private static final String ACCEPT = "Accept";
 	private String gatekeeperUrl;
 	private HttpHandlerFactory httpHandlerFactory;
@@ -51,23 +50,47 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 	@Override
 	public AuthToken getAuthTokenForUserInfo(UserInfo userInfo) {
 		String url = gatekeeperUrl + "rest/authToken";
-
-		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
-		String json = userInfoToJsonConverter.convertUserInfoToJson();
-
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
-		httpHandler.setRequestProperty(ACCEPT, APPLICATION_UUB_RECORD_JSON);
-		httpHandler.setRequestProperty("Content-Type", APPLICATION_UUB_RECORD_JSON);
-		httpHandler.setOutput(json);
+		httpHandler.setRequestProperty("Content-Type", "application/vnd.uub.userInfo+json");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
+		httpHandler.setOutput(convertUserInfoToJson(userInfo));
 
-		if (httpHandler.getResponseCode() != STATUS_OK) {
-			throw new AuthenticationException("authToken gives no authorization:"
-					+ httpHandler.getResponseCode() + " url:  " + url + " json: " + json);
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken cannot be created");
+		return convertJsonToAuthToken(httpHandler.getResponseText());
+	}
+
+	private String convertUserInfoToJson(UserInfo userInfo) {
+		UserInfoToJsonConverter userInfoToJsonConverter = new UserInfoToJsonConverter(userInfo);
+		return userInfoToJsonConverter.convertUserInfoToJson();
+	}
+
+	private void ifStatusNokThrowAuthenticationException(int responseCode, String errorMessage) {
+		if (responseCode != STATUS_OK) {
+			throw new AuthenticationException(errorMessage);
 		}
+	}
+
+	private AuthToken convertJsonToAuthToken(String responseText) {
 		JsonToAuthTokenConverter jsonToAuthTokenConverter = JsonToAuthTokenConverter
-				.forJson(httpHandler.getResponseText());
+				.forJson(responseText);
 		return jsonToAuthTokenConverter.parseAuthTokenFromJson();
+	}
+
+	@Override
+	public AuthToken renewAuthToken(String tokenId, String token) {
+		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
+		HttpHandler httpHandler = httpHandlerFactory.factor(url);
+		httpHandler.setRequestMethod("POST");
+		httpHandler.setRequestProperty("Content-Type", "text/plain");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
+		httpHandler.setOutput(token);
+
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken could not be renewed");
+		return convertJsonToAuthToken(httpHandler.getResponseText());
+
 	}
 
 	@Override
@@ -75,20 +98,19 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		String url = gatekeeperUrl + "rest/authToken/" + tokenId;
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("DELETE");
+		httpHandler.setRequestProperty("Content-Type", "text/plain");
 		httpHandler.setOutput(authToken);
 
-		if (httpHandler.getResponseCode() != STATUS_OK) {
-			throw new AuthenticationException("AuthToken could not be removed");
-		}
+		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
+				"AuthToken could not be removed");
 	}
 
-	public String getGatekeeperUrl() {
-		// needed for test
+	public String onlyForTestGetGatekeeperUrl() {
 		return gatekeeperUrl;
 	}
 
-	public HttpHandlerFactory getHttpHandlerFactory() {
-		// needed for test
+	public HttpHandlerFactory onlyForTersGetHttpHandlerFactory() {
 		return httpHandlerFactory;
 	}
+
 }
