@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, 2024 Uppsala University Library
+ * Copyright 2017, 2024, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -20,8 +20,10 @@
 package se.uu.ub.cora.gatekeepertokenprovider.json;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
 import se.uu.ub.cora.json.parser.JsonArray;
@@ -31,11 +33,16 @@ import se.uu.ub.cora.json.parser.JsonValue;
 import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public final class JsonToAuthTokenConverter {
-
+	private static final String VALUE = "value";
+	private static final String NAME = "name";
 	private static final String CHILDREN = "children";
-
 	private String jsonAuthToken;
-	private Map<String, String> childValues;
+	private Map<String, String> childValues = new HashMap<>();
+	private Set<String> permissionUnits = new LinkedHashSet<>();
+
+	public static JsonToAuthTokenConverter forJson(String jsonAuthToken) {
+		return new JsonToAuthTokenConverter(jsonAuthToken);
+	}
 
 	private JsonToAuthTokenConverter(String jsonAuthToken) {
 		this.jsonAuthToken = jsonAuthToken;
@@ -43,31 +50,50 @@ public final class JsonToAuthTokenConverter {
 
 	public AuthToken parseAuthTokenFromJson() {
 		JsonParser jsonParser = new OrgJsonParser();
-		JsonObject jsonUser = (JsonObject) jsonParser.parseString(jsonAuthToken);
-		childValues = extractChildValuesToArray(jsonUser);
-		return createAuthTokenFromChildValues(childValues);
+		JsonObject jsonAuthTokenObject = (JsonObject) jsonParser.parseString(jsonAuthToken);
+		extractChildValues(jsonAuthTokenObject);
+		return createAuthTokenFromChildValuesAndPermissionUnits();
 	}
 
-	public static JsonToAuthTokenConverter forJson(String jsonAuthToken) {
-		return new JsonToAuthTokenConverter(jsonAuthToken);
-	}
-
-	private Map<String, String> extractChildValuesToArray(JsonObject jsonUser) {
+	private void extractChildValues(JsonObject jsonUser) {
 		JsonArray children = jsonUser.getValueAsJsonArray(CHILDREN);
-		childValues = new HashMap<>();
 		for (JsonValue child : children) {
-			JsonObject childObject = (JsonObject) child;
-			childValues.put(childObject.getValueAsJsonString("name").getStringValue(),
-					childObject.getValueAsJsonString("value").getStringValue());
+			parseChild((JsonObject) child);
 		}
-		return childValues;
 	}
 
-	private AuthToken createAuthTokenFromChildValues(Map<String, String> childValues) {
+	private void parseChild(JsonObject child) {
+		String name = child.getValueAsJsonString(NAME).getStringValue();
+		if ("permissionUnit".equals(name)) {
+			extractPermissionUnits(child);
+		} else {
+			extractAtomicValue(child, name);
+		}
+	}
+
+	private void extractPermissionUnits(JsonObject childObject) {
+		JsonArray permissionUnitChildren = childObject.getValueAsJsonArray(CHILDREN);
+		permissionUnitChildren.forEach(child -> possiblyParsePermissionUnitId((JsonObject) child));
+	}
+
+	private void possiblyParsePermissionUnitId(JsonObject permissionUnitChild) {
+		String permissionUnitName = permissionUnitChild.getValueAsJsonString(NAME).getStringValue();
+		if ("linkedRecordId".equals(permissionUnitName)) {
+			String permissionUnitValue = permissionUnitChild.getValueAsJsonString(VALUE)
+					.getStringValue();
+			permissionUnits.add(permissionUnitValue);
+		}
+	}
+
+	private void extractAtomicValue(JsonObject childObject, String name) {
+		childValues.put(name, childObject.getValueAsJsonString(VALUE).getStringValue());
+	}
+
+	private AuthToken createAuthTokenFromChildValuesAndPermissionUnits() {
 		return new AuthToken(childValues.get("token"), childValues.get("tokenId"),
 				Long.parseLong(childValues.get("validUntil")),
 				Long.parseLong(childValues.get("renewUntil")), childValues.get("idInUserStorage"),
 				childValues.get("loginId"), Optional.ofNullable(childValues.get("firstName")),
-				Optional.ofNullable(childValues.get("lastName")));
+				Optional.ofNullable(childValues.get("lastName")), permissionUnits);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, 2024 Uppsala University Library
+ * Copyright 2017, 2024, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -22,7 +22,10 @@ package se.uu.ub.cora.gatekeepertokenprovider;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.testng.annotations.Test;
 
@@ -36,8 +39,8 @@ public class AuthTokenTest {
 		String idInUserStorage = "141414";
 		String loginId = "loginId";
 
-		AuthToken authToken = new AuthToken(token, tokenId, validUntil, renewUntil,
-				idInUserStorage, loginId, Optional.empty(), Optional.empty());
+		AuthToken authToken = new AuthToken(token, tokenId, validUntil, renewUntil, idInUserStorage,
+				loginId, Optional.empty(), Optional.empty(), Collections.emptySet());
 
 		assertEquals(authToken.token(), token);
 		assertEquals(authToken.tokenId(), tokenId);
@@ -47,6 +50,7 @@ public class AuthTokenTest {
 		assertEquals(authToken.loginId(), loginId);
 		assertTrue(authToken.firstName().isEmpty());
 		assertTrue(authToken.lastName().isEmpty());
+		assertTrue(authToken.permissionUnits().isEmpty());
 	}
 
 	@Test
@@ -59,9 +63,10 @@ public class AuthTokenTest {
 		String loginId = "loginId";
 		String firstname = "someFirstName";
 		String lastname = "someLastName";
+		Set<String> permissionUnits = new LinkedHashSet<>();
 
-		AuthToken authToken = new AuthToken(token, tokenId, validUntil, renewUntil,
-				idInUserStorage, loginId, Optional.of(firstname), Optional.of(lastname));
+		AuthToken authToken = new AuthToken(token, tokenId, validUntil, renewUntil, idInUserStorage,
+				loginId, Optional.of(firstname), Optional.of(lastname), permissionUnits);
 
 		assertEquals(authToken.token(), token);
 		assertEquals(authToken.tokenId(), tokenId);
@@ -71,5 +76,6 @@ public class AuthTokenTest {
 		assertEquals(authToken.loginId(), loginId);
 		assertEquals(authToken.firstName().get(), firstname);
 		assertEquals(authToken.lastName().get(), lastname);
+		assertTrue(authToken.permissionUnits().isEmpty());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2024 Uppsala University Library
+ * Copyright 2016, 2024, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -21,6 +21,9 @@ package se.uu.ub.cora.gatekeepertokenprovider.json;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
@@ -28,12 +31,36 @@ import se.uu.ub.cora.gatekeepertokenprovider.AuthToken;
 public class JsonToAuthTokenConverterTest {
 	@Test
 	public void testJsonToUserInfoConverterWithOutNames() {
-		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
-				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
-				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
-				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"}" + "],\"name\":\"authToken\"}";
+		String jsonAuthToken = """
+				{
+				  "children": [
+				    {
+				      "name": "token",
+				      "value": "someToken"
+				    },
+				    {
+				      "name": "tokenId",
+				      "value": "someTokenId"
+				    },
+				    {
+				      "name": "validUntil",
+				      "value": "100"
+				    },
+				    {
+				      "name": "renewUntil",
+				      "value": "200"
+				    },
+				    {
+				      "name": "idInUserStorage",
+				      "value": "someIdFromStorage"
+				    },
+				    {
+				      "name": "loginId",
+				      "value": "someLoginId"
+				    }
+				  ],
+				  "name": "authToken"
+				}""";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
 
 		AuthToken authToken = converter.parseAuthTokenFromJson();
@@ -43,19 +70,63 @@ public class JsonToAuthTokenConverterTest {
 		assertEquals(authToken.renewUntil(), 200L);
 		assertEquals(authToken.idInUserStorage(), "someIdFromStorage");
 		assertEquals(authToken.loginId(), "someLoginId");
+		assertEquals(authToken.permissionUnits(), Collections.emptySet());
 	}
 
 	@Test
 	public void testJsonToUserInfoConverterWithNames() {
-		String jsonAuthToken = "{\"children\":[" + "{\"name\":\"token\",\"value\":\"someToken\"},"
-				+ "{\"name\":\"tokenId\",\"value\":\"someTokenId\"},"
-				+ "{\"name\":\"validUntil\",\"value\":\"100\"},"
-				+ "{\"name\":\"renewUntil\",\"value\":\"200\"},"
-				+ "{\"name\":\"idInUserStorage\",\"value\":\"someIdFromStorage\"},"
-				+ "{\"name\":\"loginId\",\"value\":\"someLoginId\"},"
-				+ "{\"name\":\"firstName\",\"value\":\"someFirstName\"},"
-				+ "{\"name\":\"lastName\",\"value\":\"someLastName\"}"
-				+ "],\"name\":\"authToken\"}";
+		String jsonAuthToken = """
+				{
+				  "children": [
+				    {
+				      "name": "token",
+				      "value": "someToken"
+				    },
+				    {
+				      "name": "tokenId",
+				      "value": "someTokenId"
+				    },
+				    {
+				      "name": "validUntil",
+				      "value": "100"
+				    },
+				    {
+				      "name": "renewUntil",
+				      "value": "200"
+				    },
+				    {
+				      "name": "idInUserStorage",
+				      "value": "someIdFromStorage"
+				    },
+				    {
+				      "name": "loginId",
+				      "value": "someLoginId"
+				    },
+				    {
+				      "name": "firstName",
+				      "value": "someFirstName"
+				    },
+				    {
+				      "name": "lastName",
+				      "value": "someLastName"
+				    },
+				    {
+				      "repeatid": "1",
+				      "children": [
+				        {
+				          "name": "linkedRecordType",
+				          "value": "permissionUnit"
+				        },
+				        {
+				          "name": "linkedRecordId",
+				          "value": "001"
+				        }
+				      ],
+				      "name": "permissionUnit"
+				    }
+				  ],
+				  "name": "authToken"
+				}""";
 		JsonToAuthTokenConverter converter = JsonToAuthTokenConverter.forJson(jsonAuthToken);
 
 		AuthToken authToken = converter.parseAuthTokenFromJson();
@@ -67,6 +138,13 @@ public class JsonToAuthTokenConverterTest {
 		assertEquals(authToken.loginId(), "someLoginId");
 		assertEquals(authToken.firstName().get(), "someFirstName");
 		assertEquals(authToken.lastName().get(), "someLastName");
+		Set<String> permissionUnits = authToken.permissionUnits();
+		assertPermissionUnits(permissionUnits);
 	}
 
+	private void assertPermissionUnits(Set<String> permissionUnits) {
+		assertEquals(permissionUnits.size(), 1);
+		String permissionUnitFirstElement = permissionUnits.iterator().next();
+		assertEquals(permissionUnitFirstElement, "001");
+	}
 }
