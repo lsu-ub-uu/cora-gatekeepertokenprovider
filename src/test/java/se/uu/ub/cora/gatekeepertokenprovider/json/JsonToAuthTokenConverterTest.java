@@ -111,7 +111,7 @@ public class JsonToAuthTokenConverterTest {
 				      "value": "someLastName"
 				    },
 				    {
-				      "repeatid": "1",
+				      "repeatId": "1",
 				      "children": [
 				        {
 				          "name": "linkedRecordType",
