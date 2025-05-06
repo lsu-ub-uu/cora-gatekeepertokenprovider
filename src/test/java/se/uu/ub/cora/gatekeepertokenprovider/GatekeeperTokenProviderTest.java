@@ -83,9 +83,9 @@ public class GatekeeperTokenProviderTest {
 						+ "],\"name\":\"userInfo\"}");
 
 		assertEquals(httpHandler.requestProperties.get("Content-Type"),
-				"application/vnd.uub.userInfo+json");
+				"application/vnd.cora.userInfo+json");
 		assertEquals(httpHandler.requestProperties.get("Accept"),
-				"application/vnd.uub.authToken+json");
+				"application/vnd.cora.authToken+json");
 		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestMetod, "POST");
 		assertEquals(httpHandler.url, "http://localhost:8080/gatekeeper/rest/authToken");
@@ -146,7 +146,7 @@ public class GatekeeperTokenProviderTest {
 		assertEquals(httpHandler.requestProperties.size(), 2);
 		assertEquals(httpHandler.requestProperties.get("Content-Type"), "text/plain");
 		assertEquals(httpHandler.requestProperties.get("Accept"),
-				"application/vnd.uub.authToken+json");
+				"application/vnd.cora.authToken+json");
 		assertEquals(httpHandler.url,
 				"http://localhost:8080/gatekeeper/rest/authToken/someTokenId");
 	}

@@ -52,8 +52,8 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		String url = gatekeeperUrl + "rest/authToken";
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
-		httpHandler.setRequestProperty("Content-Type", "application/vnd.uub.userInfo+json");
-		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
+		httpHandler.setRequestProperty("Content-Type", "application/vnd.cora.userInfo+json");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.cora.authToken+json");
 		httpHandler.setOutput(convertUserInfoToJson(userInfo));
 
 		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
@@ -84,7 +84,7 @@ public final class GatekeeperTokenProviderImp implements GatekeeperTokenProvider
 		HttpHandler httpHandler = httpHandlerFactory.factor(url);
 		httpHandler.setRequestMethod("POST");
 		httpHandler.setRequestProperty("Content-Type", "text/plain");
-		httpHandler.setRequestProperty(ACCEPT, "application/vnd.uub.authToken+json");
+		httpHandler.setRequestProperty(ACCEPT, "application/vnd.cora.authToken+json");
 		httpHandler.setOutput(token);
 
 		ifStatusNokThrowAuthenticationException(httpHandler.getResponseCode(),
